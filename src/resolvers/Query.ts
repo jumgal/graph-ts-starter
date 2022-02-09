@@ -13,12 +13,22 @@ export const Query = {
             }
         })
     },
-    profile: (_: any, { userId }: { userId: string }, { prisma, userInfo }: Context) => {
-        return prisma.profile.findUnique({
+    profile: async (_: any, { userId }: { userId: string }, { prisma, userInfo }: Context) => {
+
+        const isMyProfile = Number(userId) === userInfo?.userId
+
+        const profile = await prisma.profile.findUnique({
             where: {
                 userId: Number(userId)
             }
         })
+
+        if (!profile) return null
+
+        return {
+            ...profile,
+            isMyProfile
+        }
     },
     posts: async (_: any, __: any, { prisma }: Context): Promise<Post[]> => {
 
